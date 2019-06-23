@@ -4,25 +4,44 @@ from datetime import datetime
 import time
 import shodan
 import json
-def query_shodan(api_key, query_file):
+
+
+def query_shodan(api_key, query_file=None, keyword=None):
     api = shodan.Shodan(api_key)
     total = 0
-    with open(query_file, 'r', encoding="utf-8") as query_f:
-        for line in query_f:
-            try:
-                # Search Shodan
-                results = api.search('{}'.format(line))
-                time.sleep(3)
-                # Show the results
-                total += results['total']
-                for result in results['matches']:
-                    ip = result['ip_str']
-                    data = result['data']
-                    create_report(ip, data)
-            except shodan.APIError as e:
-                print('Error: {} \n {}'.format(e, line))
-    print ("Total Results: {}".format(total))
-    return 1
+
+    if keyword is not None:
+        try:
+            # Search Shodan
+            results = api.search('{}'.format(keyword))
+            time.sleep(3)
+            # Show the results
+            total += results['total']
+            for result in results['matches']:
+                ip = result['ip_str']
+                data = result['data']
+                create_report(ip, data)
+        except shodan.APIError as e:
+            print('Error: {} \n {}'.format(e, line))
+        print ("Total Results: {}".format(total))
+        return 1
+    if query_file is not None:
+        with open(query_file, 'r', encoding="utf-8") as query_f:
+            for line in query_f:
+                try:
+                    # Search Shodan
+                    results = api.search('{}'.format(line))
+                    time.sleep(3)
+                    # Show the results
+                    total += results['total']
+                    for result in results['matches']:
+                        ip = result['ip_str']
+                        data = result['data']
+                        create_report(ip, data)
+                except shodan.APIError as e:
+                    print('Error: {} \n {}'.format(e, line))
+        print ("Total Results: {}".format(total))
+        return 1
 
 def shodan_query_manager(api_key, kill_time, increment, query_file):
     check_time(kill_time)
@@ -31,6 +50,7 @@ def shodan_query_manager(api_key, kill_time, increment, query_file):
     do_increment(pause_time, restart_time, increment)
 
 def create_report(ip, data):
+    # ex. directory 2019_1_1/
     date_string = "{0}_{1}_{2}".format(datetime.now().date().year, datetime.now().date().month, datetime.now().date().day)
     if os.path.isdir("reports") == False:
         os.mkdir("reports")
@@ -48,10 +68,7 @@ def create_report(ip, data):
             return 1
     except Exception as e:
         print("File already exists...must've scanned it already")
-    # with open(date_string, 'a') as file:
-    #     for results in
-    #     file.write("{0}\n".format(json.dumps(results)))
-    # name the file Ip
+
 
 def do_increment(pause_time, restart_time, increment):
     if pause_time >= datetime.now():
@@ -68,6 +85,6 @@ def check_time(kill_time):
         exit()
 
 if __name__ == '__main__':
-    query_shodan(api_key='AHkquvhacYT8fq3RMh82BT0YFtYYnoKe', query_file="queryList.txt")
+    query_shodan(api_key='avlpKztAbM6rS7ak3CtcISbPBco7JJcE', query_file="stream_queries.txt")
 
     main()
