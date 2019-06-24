@@ -16,6 +16,13 @@ def main():
     parser.add_argument('--file', help="File with all shodan api query strings")
     parser.add_argument('--keyword', help="Single query string to search shodan with")
 
+    monitor = parser.add_argument_group('Monitor', description="Set up alerts for monitoring ips from scans.")
+
+    monitor.add_argument('--create-alert', help="Create a new alert")
+    monitor.add_argument('--list-alerts', help="List all alerts associated with this account")
+    monitor.add_argument('--add-trigger', help="add trigger to specific alert")
+    monitor.add_argument('--disable-trigger', help="disable trigger from alert id.")
+
     args = parser.parse_args()
 
 
