@@ -4,7 +4,7 @@ from datetime import datetime
 import time
 import shodan
 import json
-
+from helpers import get_prompt, print_options
 
 created_alert = "Added ip to {0} {1}"
 trigger_added = "Added trigger {0}"
@@ -55,8 +55,15 @@ def grab_info(api_key, alert_id):
     return 1
 
 
-def add_trigger(api_key, alert_id, trigger):
+def add_trigger(api_key):
     api = shodan.Shodan(api_key)
+
+    get_all_info(api_key)
+    alert_id = get_prompt("Select Alert ID")
+
+    get_all_triggers(api_key)
+    trigger = get_prompt("Select Trigger")
+
     api.enable_alert_trigger(aid=alert_id, trigger=trigger)
 
     print(trigger_added.format(trigger))
@@ -85,3 +92,29 @@ def get_all_info(api_key):
 
         print(all_info)
     return 1
+
+def get_all_triggers(api_key):
+    api = shodan.Shodan(api_key)
+    all_triggers = api.alert_triggers()
+
+    for trigger in all_triggers:
+
+        print("Name: {0}\n Rule: {1}\n Description: {2}\n".format(trigger['name'], trigger['rule'], trigger['description']))
+
+def alert_manager(api_key):
+
+    api = shodan.Shodan(api_key)
+
+    available_functions = {'get_info': get_all_info(api_key), 'add_alert': add_trigger(api_key), 'disable_alert': disable_alert(api_key), 'options': print_options(options, api_key), '?': print_options(options, api_key)}
+    get_all_info(api_key)
+
+    prompt = get_prompt("alert-manager")
+
+    if prompt is "options" or prompt is "?":
+        print_options(available_functions)
+
+
+        exit()
+if __name__ == '__main__':
+    alert_manager("5Dl3YPn8ZAZkO0tZ8ktxeJXYYg7uNYWu")
+    main()

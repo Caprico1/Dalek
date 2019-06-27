@@ -18,11 +18,12 @@ def main():
 
     monitor = parser.add_argument_group('Monitor', description="Set up alerts for monitoring ips from scans.")
 
-    monitor.add_argument('--create-alert', help="Create a new alert")
+    monitor.add_argument('--create-alert NAME', help="Create a new alert")
     monitor.add_argument('--list-alerts', help="List all alerts associated with this account")
-    monitor.add_argument('--add-trigger', help="add trigger to specific alert")
-    monitor.add_argument('--disable-trigger', help="disable trigger from alert id.")
+    monitor.add_argument('--add-trigger TRIGGER', help="add trigger to specific alert")
+    monitor.add_argument('--disable-trigger TRIGGER', help="disable trigger from alert id.")
 
+    monitor.add_argument('--alert-manager', help="Semi gui input thing for creating alerts")
     args = parser.parse_args()
 
 
