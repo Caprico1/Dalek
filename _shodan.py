@@ -65,7 +65,12 @@ def create_report(ip, data):
             file.write(data+ "\n")
             file.write("\n")
             file.close()
-            return 1
+
+        with open("reports/" + date_string + "/all_ips.txt") as ip_file:
+            print("{}: Report Created\n".format(ip))
+            ip_file.write(ip + "\n")
+
+        return 1
     except Exception as e:
         print("File already exists...must've scanned it already")
 
@@ -83,8 +88,3 @@ def check_time(kill_time):
     if datetime.now() == kill_time:
         print("Killing program now")
         exit()
-
-if __name__ == '__main__':
-    query_shodan(api_key='avlpKztAbM6rS7ak3CtcISbPBco7JJcE', query_file="stream_queries.txt")
-
-    main()
