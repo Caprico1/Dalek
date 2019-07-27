@@ -88,8 +88,3 @@ def check_time(kill_time):
     if datetime.now() == kill_time:
         print("Killing program now")
         exit()
-
-if __name__ == '__main__':
-    query_shodan(api_key='avlpKztAbM6rS7ak3CtcISbPBco7JJcE', query_file="stream_queries.txt")
-
-    main()

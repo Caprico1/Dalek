@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from datetime import datetime
 from _shodan import shodan_query_manager, query_shodan
+from monitor import alert_manager
 def main():
 
     api_key = None
@@ -18,36 +19,44 @@ def main():
 
     monitor = parser.add_argument_group('Monitor', description="Set up alerts for monitoring ips from scans.")
 
-    monitor.add_argument('--create-alert NAME', help="Create a new alert")
-    monitor.add_argument('--list-alerts', help="List all alerts associated with this account")
-    monitor.add_argument('--add-trigger TRIGGER', help="add trigger to specific alert")
-    monitor.add_argument('--disable-trigger TRIGGER', help="disable trigger from alert id.")
+    ## TODO
+    # monitor.add_argument('--create-alert NAME', help="Create a new alert")
+    # monitor.add_argument('--list-alerts', help="List all alerts associated with this account")
+    # monitor.add_argument('--add-trigger TRIGGER', help="add trigger to specific alert")
+    # monitor.add_argument('--disable-trigger TRIGGER', help="disable trigger from alert id.")
 
-    monitor.add_argument('--alert-manager', help="Semi gui input thing for creating alerts")
+    monitor.add_argument('--alert-manager', action="store_true", help="Semi gui input thing for creating alerts")
     args = parser.parse_args()
 
 
-    if args.keyword is not None:
-        keyword = args.keyword
-        api_key = args.api_key
+    if args.api_key is not None:
 
-        if keyword is None or api_key is None:
-            print("Need keyword and api_key key...\n Check your arguments...pls")
-            exit()
+        if args.alert_manager is True:
+            alert_manager(args.api_key)
 
-        query_shodan(api_key=api_key, keyword=keyword)
-    elif args.file is not None:
-        api_key = args.api_key
-        query_file = args.file
+        if args.keyword is not None:
+            keyword = args.keyword
+            api_key = args.api_key
 
-        if query_file is None or api_key is None:
-            print("Need file path and api_key key...\n Check your arguments...pls")
-            exit()
+            if keyword is None or api_key is None:
+                print("Need keyword and api_key key...\n Check your arguments...pls")
+                exit()
 
-        query_shodan(api_key=api_key, query_file=query_file)
+            query_shodan(api_key=api_key, keyword=keyword)
+        elif args.file is not None:
+            api_key = args.api_key
+            query_file = args.file
+
+            if query_file is None or api_key is None:
+                print("Need file path and api_key key...\n Check your arguments...pls")
+                exit()
+
+            query_shodan(api_key=api_key, query_file=query_file)
 
 
-    print("All done...byb")
+        print("All done...byb")
+    else:
+        print("API KEY REQUIRED!!!")
     exit()
     # later
     # try:
