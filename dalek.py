@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from config import get_api_key
 from datetime import datetime
 from _shodan import shodan_query_manager, query_shodan
 from monitor import alert_manager
@@ -36,8 +37,10 @@ def main():
     args = parser.parse_args()
 
 
-    if args.api_key is not None:
+    if args.api_key is None:
+        args.api_key = get_api_key()
 
+    if args.api_key is not None:
         if args.alert_manager is True:
             alert_manager(args.api_key)
 
