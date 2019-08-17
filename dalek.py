@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 from datetime import datetime
 from _shodan import shodan_query_manager, query_shodan
 from monitor import alert_manager
+import exploit-api
 def main():
 
     api_key = None
@@ -26,6 +27,12 @@ def main():
     # monitor.add_argument('--disable-trigger TRIGGER', help="disable trigger from alert id.")
 
     monitor.add_argument('--alert-manager', action="store_true", help="Semi gui input thing for creating alerts")
+
+    exploits = parser.add_argument_group('Exploits', description="Query Exploits from Shodans Exploit API")
+
+    parser.add_argument('--find-exploit', description="Find Exploits Based off keyword search")
+
+
     args = parser.parse_args()
 
 
