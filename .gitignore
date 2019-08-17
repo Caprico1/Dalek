@@ -1,3 +1,4 @@
 reports/
 __pycache__/
 queries/
+dalek-config.json
