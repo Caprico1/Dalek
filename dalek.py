@@ -3,7 +3,7 @@ from config import get_api_key
 from datetime import datetime
 from _shodan import shodan_query_manager, query_shodan
 from monitor import alert_manager
-import exploit-api
+import exploit_api
 def main():
 
     api_key = None
@@ -31,7 +31,7 @@ def main():
 
     exploits = parser.add_argument_group('Exploits', description="Query Exploits from Shodans Exploit API")
 
-    parser.add_argument('--find-exploit', description="Find Exploits Based off keyword search")
+    exploits.add_argument('--find-exploit', help="Find Exploits Based off keyword search")
 
 
     args = parser.parse_args()
