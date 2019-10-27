@@ -175,9 +175,3 @@ def all_results(api_key, query_file=None, keyword=None):
                 create_report(ip, data, docker)
 
         out_file.close()
-
-
-
-if __name__ == '__main__':
-
-    all_results("5Dl3YPn8ZAZkO0tZ8ktxeJXYYg7uNYWu", keyword="docker port:2375")
