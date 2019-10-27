@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from config import get_api_key
 from datetime import datetime
-from _shodan import shodan_query_manager, query_shodan
+from _shodan import shodan_query_manager, query_shodan, all_results
 from monitor import alert_manager
 import exploit_api
 def main():
@@ -18,7 +18,7 @@ def main():
     parser.add_argument('--increment', help="How far increments of scans will be in hours. (Example: 1, 2, 3)")
     parser.add_argument('--file', help="File with all shodan api query strings")
     parser.add_argument('--keyword', help="Single query string to search shodan with")
-
+    parser.add_argument('--all_results', action="store_true", help="Get larger amount of results. \n\t Usage: --all_results --keyword "" or --all_results --file <path> \n\n \t(!! WARNING: This will use up a large number of query credits !!)")
     monitor = parser.add_argument_group('Monitor', description="Set up alerts for monitoring ips from scans.")
 
     ## TODO
@@ -43,6 +43,15 @@ def main():
     if args.api_key is not None:
         if args.alert_manager is True:
             alert_manager(args.api_key)
+
+        if args.all_results is True and args.keyword is not None:
+            all_results(api_key=args.api_key, keyword=args.keyword)
+
+        elif args.all_results is True and args.file is not None:
+            all_results(api_key=args.api_key, query_file=args.keyword)
+        else:
+            print("Dalek cannot download results without query file or keyword...")
+            exit()
 
         if args.keyword is not None:
             keyword = args.keyword
