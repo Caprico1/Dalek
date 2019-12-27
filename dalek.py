@@ -49,9 +49,9 @@ def main():
 
         elif args.all_results is True and args.file is not None:
             all_results(api_key=args.api_key, query_file=args.keyword)
-        else:
-            print("Dalek cannot download results without query file or keyword...")
-            exit()
+        #else:
+        #    print("Dalek cannot download results without query file or keyword...")
+         #   exit()
 
         if args.keyword is not None:
             keyword = args.keyword
