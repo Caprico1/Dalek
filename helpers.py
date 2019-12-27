@@ -40,8 +40,3 @@ def files_check(date_string):
         os.mkdir("reports/" + date_string)
 
     return 1
-
-
-
-if __name__ == '__main__':
-    prompt_for_pages(calculate_pages(3836))
