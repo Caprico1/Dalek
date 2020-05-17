@@ -60,6 +60,13 @@ def main():
     args = parser.parse_args()
 
 
+    if args.find_exploit is not None:
+        results = exploit_api.query_exploits(get_api_key(),args.find_exploit)
+
+        print(results)
+
+
+
     if args.api_key is None:
         args.api_key = get_api_key()
 
@@ -119,5 +126,6 @@ def main():
     #     exit()
     #
     # shodan_query_manager(api_key, kill_time, increment)
+
 
 main()

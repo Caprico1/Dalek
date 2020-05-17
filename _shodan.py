@@ -83,13 +83,7 @@ def create_report(ip, data, docker=None):
         #     print(key + "=>", val)
         pass
 
-def do_increment(pause_time, restart_time, increment):
-    if pause_time >= datetime.now():
-        sleep(1)
-        while datetime.now() >= restart_time:
-            do_increment(pause_time, restart_time, increment)
-    else:
-        pass
+
 
 
 
