@@ -1,4 +1,8 @@
 import math
+from datetime import datetime
+import shodan
+import time
+import os
 
 def get_prompt(string=None):
     if string is not None:
@@ -25,6 +29,40 @@ def prompt_for_pages(pages):
     return page_number
 
 
+def get_date_string():
 
-if __name__ == '__main__':
-    prompt_for_pages(calculate_pages(3836))
+    return "{0}_{1}_{2}".format(datetime.now().date().year, datetime.now().date().month, datetime.now().date().day)
+
+def report_dir_check(date_string):
+    if os.path.isdir("reports") == False:
+        os.mkdir("reports")
+    # create dir of datetime if it doesn't exist
+    if os.path.isdir("reports/" + date_string) == False:
+        os.mkdir("reports/" + date_string)
+
+    return
+
+def get_total_results(api, keyword=None, line=None):
+
+    if keyword is not None:
+
+        total = api.count('{}'.format(keyword))['total']
+        time.sleep(3)
+
+    elif line is not None:
+
+        total = api.count('{}'.format(line))['total']
+        time.sleep(3)
+
+
+
+    return total
+
+def write_to_ip_file(report):
+    with open(report, 'a+', encoding="utf-8") as file:
+        file.write("{}\n".format(ip))
+        file.write("{}\n".format(data))
+        file.write("\n")
+        file.close()
+
+    return
