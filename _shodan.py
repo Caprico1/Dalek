@@ -5,6 +5,8 @@ import time
 import shodan
 import json
 import helpers
+from docker import write_docker_file
+from schedule import shodan_query_manager
 
 def query_shodan(api_key, query_file=None, keyword=None):
     api = shodan.Shodan(api_key)
@@ -53,28 +55,21 @@ def query_shodan(api_key, query_file=None, keyword=None):
         print ("Total Results: {}".format(total))
         return 1
 
-def shodan_query_manager(api_key, kill_time, increment, query_file):
-    check_time(kill_time)
-    query_shodan(api_key, query_file)
-
-    do_increment(pause_time, restart_time, increment)
-
 def create_report(ip, data, docker=None):
     # ex. directory 2019_1_1/
-    date_string = "{0}_{1}_{2}".format(datetime.now().date().year, datetime.now().date().month, datetime.now().date().day)
-    if os.path.isdir("reports") == False:
-        os.mkdir("reports")
-    # create dir of datetime if it doesn't exist
-    if os.path.isdir("reports/" + date_string) == False:
-        os.mkdir("reports/" + date_string)
+    date_string = helpers.get_date_string()
+    helpers.report_dir_check(date_string)
 
     report = "reports/" + date_string +'/'+ ip +'.txt'
     try:
-        with open(report, 'a+', encoding="utf-8") as file:
-            file.write("{}\n".format(ip))
-            file.write("{}\n".format(data))
-            file.write("\n")
-            file.close()
+        # with open(report, 'a+', encoding="utf-8") as file:
+        #     file.write("{}\n".format(ip))
+        #     file.write("{}\n".format(data))
+        #     file.write("\n")
+        #     file.close()
+
+        helpers.write_to_ip_file(report)
+
         if docker is not None:
             write_docker_file(docker,ip, date_string)
 
@@ -83,9 +78,10 @@ def create_report(ip, data, docker=None):
             ip_file.close()
 
     except Exception as e:
-        print("Exception: {}".format(e))
-        for key,val in docker.items():
-            print(key + "=>", val)
+        # print("Exception: {}".format(e))
+        # for key,val in docker.items():
+        #     print(key + "=>", val)
+        pass
 
 def do_increment(pause_time, restart_time, increment):
     if pause_time >= datetime.now():
@@ -95,63 +91,19 @@ def do_increment(pause_time, restart_time, increment):
     else:
         pass
 
-def write_docker_file(docker, ip, date_string):
-    dockerfile = "reports/" + date_string + "/docker.txt"
 
-    with open(dockerfile, "a+") as docker_file:
-        docker_file.write(ip + "\n")
 
-        if docker['Containers']:
-            for container in docker['Containers']:
-                docker_file.write("\tImage: {}\n".format(container['Image']))
-                docker_file.write("\tID: {}\n".format(container['Id']))
-                docker_file.write("\tCommand: {}".format(container['Command']))
-                docker_file.write("\tCreated:{}\n".format(container['Created']))
-                docker_file.write("Names: \n")
 
-                for name in container['Names']:
-                    docker_file.write("\t{}\n".format(name))
-
-                docker_file.write("\tStatus: {}\n".format(container['Status']))
-                docker_file.write("Ports:\n")
-
-                for port in container['Ports']:
-                    docker_file.write("\t{}\n".format(port))
-        elif docker['Containers'] == "":
-            pass
-        else:
-            pass
-
-        # docker_file.write("COMPONENTS: \n")
-        # for components in docker['Components']:
-        #     docker_file.write("{}\n".format(components['Name']))
-        #     docker_file.write('\tDetails:\n')
-        #     # docker_file.write("\t\tExperimental: {}\n".format(components['Details']['Experimental']))
-        #     docker_file.write("\t\tOS: {}\n".format(components['Details']['Os'] ))
-        #     docker_file.write("\t\tMinAPIVersion {}\n".format(components['Details']['MinAPIVersion']))
-        #     docker_file.write("\t\tKernelVersion: {}\n".format(components['Details']['KernelVersion']))
-        #     docker_file.write("\t\tGoVersion: {}\n".format(components['Details']['GoVersion'] ))
-        #     docker_file.write("\t\tGitCommit: {}\n".format(components['Details']['GitCommit'] ))
-        #     docker_file.write("\t\tBuildTime: {}\n".format(components['Details']['BuildTime'] ))
-        #     docker_file.write("\t\tApiVersion: {}\n".format(components['Details']['ApiVersion']))
-        #     docker_file.write("\t\tArch: {}\n".format(components['Details']['Arch']))
-    docker_file.close()
-
-def check_time(kill_time):
-    if datetime.now() == kill_time:
-        print("Killing program now")
-        exit()
-
-def all_results(api_key, query_file=None, keyword=None):
-    limit = int(input("How many results: "))
+def all_results(api_key, keyword=None, limit_results=None):
     api = shodan.Shodan(api_key)
-    page = 0
-    date_string = "{0}_{1}_{2}".format(datetime.now().date().year, datetime.now().date().month, datetime.now().date().day)
-    if os.path.isdir("reports") == False:
-        os.mkdir("reports")
-    # create dir of datetime if it doesn't exist
-    if os.path.isdir("reports/" + date_string) == False:
-        os.mkdir("reports/" + date_string)
+
+    if limit_results is None:
+        limit = helpers.get_total_results(api, keyword=keyword)
+    else:
+        limit = limit_results
+    date_string = helpers.get_date_string()
+    helpers.report_dir_check(date_string)
+
 
     if keyword is not None:
         output_file = "reports/" + date_string + "/-export" + keyword.replace(" ", "_").replace(":", "_")

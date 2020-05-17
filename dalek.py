@@ -70,10 +70,10 @@ def main():
         if args.limit is not None:
 
             if args.all_results is True and args.keyword is not None:
-                all_results(api_key=args.api_key, keyword=args.keyword)
+                all_results(api_key=args.api_key, keyword=args.keyword, limit_results=args.limit)
 
             elif args.all_results is True and args.file is not None:
-                all_results(api_key=args.api_key, query_file=args.keyword)
+                all_results(api_key=args.api_key, query_file=args.keyword, limit_results=args.limit)
         elif args.limit is None:
             if args.all_results is True and args.keyword is not None:
                 all_results(api_key=args.api_key, keyword=args.keyword)
