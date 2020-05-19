@@ -58,11 +58,16 @@ def get_total_results(api, keyword=None, line=None):
 
     return total
 
-def write_to_ip_file(report):
-    with open(report, 'a+', encoding="utf-8") as file:
-        file.write("{}\n".format(ip))
-        file.write("{}\n".format(data))
-        file.write("\n")
-        file.close()
+def write_to_ip_file(report, ip, data):
+    try:
+        with open(report, 'a+', encoding="utf-8") as file:
+            file.write("{}\n".format(ip))
+            file.write("{}\n".format(data))
+            file.write("\n")
+            file.close()
 
+    except:
+        print(report)
+        print("write to ip file failed")
+        pass
     return

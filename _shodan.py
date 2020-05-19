@@ -26,7 +26,12 @@ def query_shodan(api_key, query_file=None, keyword=None):
                     docker = result['docker']
                 else:
                     docker = None
-                create_report(ip, data, docker)
+
+                try:
+                    create_report(ip, data, docker)
+                except:
+                    print("Report failed")
+                    exit()
         except shodan.APIError as e:
             print('Error: {} \n {}'.format(e, line))
             pass
@@ -68,10 +73,10 @@ def create_report(ip, data, docker=None):
         #     file.write("\n")
         #     file.close()
 
-        helpers.write_to_ip_file(report)
+        helpers.write_to_ip_file(report, ip, data)
 
         if docker is not None:
-            write_docker_file(docker,ip, date_string)
+            write_docker_file(docker=docker,ip=ip, date_string=date_string)
 
         with open("reports/" + date_string + "/all_ips.txt", 'a+') as ip_file:
             ip_file.write("{}\n".format(ip))
