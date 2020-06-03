@@ -5,8 +5,10 @@ import time
 import shodan
 import json
 import helpers
+import geome
 from docker import write_docker_file
 from schedule import shodan_query_manager
+
 
 def query_shodan(api_key, query_file=None, keyword=None):
     api = shodan.Shodan(api_key)
@@ -22,6 +24,7 @@ def query_shodan(api_key, query_file=None, keyword=None):
             for result in results['matches']:
                 ip = result['ip_str']
                 data = result['data']
+                geome.write_to_geo_file(result, ip)
                 if 'docker' in result.keys():
                     docker = result['docker']
                 else:
@@ -67,12 +70,6 @@ def create_report(ip, data, docker=None):
 
     report = "reports/" + date_string +'/'+ ip +'.txt'
     try:
-        # with open(report, 'a+', encoding="utf-8") as file:
-        #     file.write("{}\n".format(ip))
-        #     file.write("{}\n".format(data))
-        #     file.write("\n")
-        #     file.close()
-
         helpers.write_to_ip_file(report, ip, data)
 
         if docker is not None:
@@ -82,16 +79,9 @@ def create_report(ip, data, docker=None):
             ip_file.write("{}\n".format(ip))
             ip_file.close()
 
+        geome.get_location_data_from_file(data, ip)
     except Exception as e:
-        # print("Exception: {}".format(e))
-        # for key,val in docker.items():
-        #     print(key + "=>", val)
         pass
-
-
-
-
-
 
 def all_results(api_key, keyword=None, limit_results=None):
     api = shodan.Shodan(api_key)

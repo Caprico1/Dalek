@@ -3,13 +3,16 @@ from config import get_api_key
 from datetime import datetime
 from _shodan import shodan_query_manager, query_shodan, all_results
 from monitor import alert_manager
+from time import sleep
 import exploit_api
 def main():
+
 
     api_key = None
     kill_time = None
     increment = None
     keyword = None
+
 
     parser = ArgumentParser(description="A shodan scraper looking for botnets utilizing and exploiting vulnerable and misconfigured docker.socket instances")
 
@@ -59,7 +62,10 @@ def main():
 
     args = parser.parse_args()
 
-
+    with open("banner.txt", 'r') as banner:
+        for line in banner:
+            print(line, end="")
+            sleep(.03)
     if args.find_exploit is not None:
         results = exploit_api.query_exploits(get_api_key(),args.find_exploit)
 
@@ -116,16 +122,4 @@ def main():
         print("API KEY REQUIRED!!!")
     exit()
     # later
-    # try:
-    #
-    #     api_key = args.api_key
-    #     kill_time = args.kill_time
-    #     increment = args.increment
-    # except:
-    #     print("ALL args need to be provided")
-    #     exit()
-    #
-    # shodan_query_manager(api_key, kill_time, increment)
-
-
 main()
