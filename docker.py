@@ -1,20 +1,19 @@
-
+from helpers import epoch_to_datetime
 
 def write_docker_file(docker, ip, date_string):
-
-
     try:
         dockerfile = "reports/" + date_string + "/docker.txt"
 
         with open(dockerfile, "a+") as docker_file:
             docker_file.write(ip + "\n")
 
-            if docker['Containers']:
+            if len(docker['Containers']) >= 1:
                 for container in docker['Containers']:
                     docker_file.write("\tImage: {}\n".format(container['Image']))
                     docker_file.write("\tID: {}\n".format(container['Id']))
-                    docker_file.write("\tCommand: {}".format(container['Command']))
+                    docker_file.write("\tCommand: {}\n".format(container['Command']))
                     docker_file.write("\tCreated:{}\n".format(container['Created']))
+                    docker_file.write('\tDatetime:{}\n'.format(epoch_to_datetime(container['Created'])))
                     docker_file.write("Names: \n")
 
                     for name in container['Names']:
@@ -45,4 +44,5 @@ def write_docker_file(docker, ip, date_string):
             #     docker_file.write("\t\tArch: {}\n".format(components['Details']['Arch']))
         docker_file.close()
     except Exception as e:
+        # print(docker)
         print("Docker result failure to write")
